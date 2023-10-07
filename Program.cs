@@ -1,7 +1,9 @@
 ﻿namespace ASD1
 {
+    
     internal class Program
     {
+        static int code = 0;
         static void Main(string[] args)
         {
             StreamReader sr = new StreamReader("input.txt");
@@ -25,13 +27,20 @@
                 ranges.Add(new Range(int.Parse(sRange[0]), int.Parse(sRange[1])));
             }
             sr.Close();
-
             Lazy(ranges, fortunes);
-
-            foreach(Range range in ranges)
+            //fortunes = Fast(ranges, fortunes);
+            int k = 0;
+            /*foreach (int fortune in fortunes)
+            {
+                Console.WriteLine(k+": "+fortune);
+                k++;
+            }
+            Console.WriteLine("-----------------------");
+            foreach (Range range in ranges)
             {
                 Console.WriteLine(range.count);
-            }
+            }*/
+            Console.WriteLine(code);
         }
         static List<int> MergeSort(List<int> list)
         {
@@ -74,13 +83,59 @@
         }
         static void Lazy(List<Range> ranges, List<int> fortunes)
         {
-            foreach(int fortune in fortunes)
+            foreach (int fortune in fortunes)
             {
-                foreach(Range range in ranges)
+                foreach (Range range in ranges)
                 {
-                    if(fortune>=range.start&&fortune<=range.end) range.count++;
+                    code++;
+                    if (fortune >= range.start && fortune <= range.end) range.count++;
                 }
             }
+        }
+        static List<int> Fast(List<Range> ranges, List<int> fortunes)
+        {
+            fortunes = MergeSort(fortunes);
+            foreach (Range range in ranges)
+            {
+                range.count = Top(fortunes, range.end) - Bot(fortunes, range.start) + 1;
+            }
+            return fortunes;
+        }
+        static int Bot(List<int> fortunes, int value)
+        {
+            int begin = 0;
+            int end = fortunes.Count();
+            while (begin < end)
+            {
+                int mid = (begin + end) / 2;
+                if (value > fortunes[mid])
+                    begin = mid + 1;
+                else
+                    end = mid;
+                code++;
+            }
+            code++;
+            if (fortunes[begin] < value)
+                return begin + 1;
+            else return begin;
+        }
+        static int Top(List<int> fortunes, int value)
+        {
+            int begin = 0;
+            int end = fortunes.Count();
+            while (begin < end)
+            {
+                int mid = (begin + end) / 2;
+                if (value > fortunes[mid])
+                    begin = mid + 1;
+                else
+                    end = mid;
+                code++;
+            }
+            code++;
+            if (fortunes[begin] > value)
+                return begin - 1;
+            else return begin;
         }
     }
 

@@ -1,53 +1,60 @@
-﻿namespace ASD1
+﻿using System.Diagnostics;
+
+namespace ASD1
 {
     
     internal class Program
     {
-        static int code = 0;
+        static long code = 0;
         static void Main(string[] args)
         {
-            StreamReader sr = new StreamReader("input.txt");
+            StreamReader sr = new StreamReader("duzy4.txt");
             string line = sr.ReadLine();
-            List<int> fortunes = new List<int>();
+            List<long> fortunes = new List<long>();
             List<Range> ranges = new List<Range>();
 
             string[] firstLine = line.Split(" ");
 
             int n = int.Parse(firstLine[0]);
             int m = int.Parse(firstLine[1]);
-            for (int i = 0; i < n; i++)
+            for (long i = 0; i < n; i++)
             {
                 line = sr.ReadLine();
-                fortunes.Add(int.Parse(line));
+                fortunes.Add(long.Parse(line));
             }
-            for (int i = 0; i < m; i++)
+            for (long i = 0; i < m; i++)
             {
                 line = sr.ReadLine();
                 string[] sRange = line.Split(" ");
-                ranges.Add(new Range(int.Parse(sRange[0]), int.Parse(sRange[1])));
+                ranges.Add(new Range(long.Parse(sRange[0]), long.Parse(sRange[1])));
             }
             sr.Close();
-            Lazy(ranges, fortunes);
-            //fortunes = Fast(ranges, fortunes);
+            Stopwatch stopwatch= new Stopwatch();
+            stopwatch.Start();
+            //Lazy(ranges, fortunes);
+            fortunes = Fast(ranges, fortunes);
+            stopwatch.Stop();
             int k = 0;
             /*foreach (int fortune in fortunes)
             {
                 Console.WriteLine(k+": "+fortune);
                 k++;
-            }
+            }*/
             Console.WriteLine("-----------------------");
+            StreamWriter streamWriter = new StreamWriter("output.txt");
             foreach (Range range in ranges)
             {
-                Console.WriteLine(range.count);
-            }*/
-            Console.WriteLine(code);
+                streamWriter.WriteLine(range.count.ToString());
+            }
+            Console.WriteLine($"Operacje: {code}, czas: {stopwatch.Elapsed}");
+            streamWriter.Close();
         }
-        static List<int> MergeSort(List<int> list)
+        static List<long> MergeSort(List<long> list)
         {
             if (list.Count > 1)
             {
-                List<int> leftList;
-                List<int> rightList;
+                List<long> leftList;
+                List<long> rightList;
                 leftList = list.Take(list.Count / 2).ToList();
                 rightList = list.Skip(list.Count / 2).ToList();
                 leftList = MergeSort(leftList);
@@ -56,14 +63,15 @@
             }
             return list;
         }
-        static List<int> Merge(List<int> leftList, List<int> rightList)
+        static List<long> Merge(List<long> leftList, List<long> rightList)
         {
             int r = 0;
             int l = 0;
-            List<int> merged = new List<int>();
+            List<long> merged = new List<long>();
 
             while (l < leftList.Count && r < rightList.Count)
             {
+                //code++;
                 if (leftList[l] <= rightList[r])
                 {
                     merged.Add(leftList[l]);
@@ -81,9 +89,9 @@
 
             return merged;
         }
-        static void Lazy(List<Range> ranges, List<int> fortunes)
+        static void Lazy(List<Range> ranges, List<long> fortunes)
         {
-            foreach (int fortune in fortunes)
+            foreach (long fortune in fortunes)
             {
                 foreach (Range range in ranges)
                 {
@@ -92,7 +100,7 @@
                 }
             }
         }
-        static List<int> Fast(List<Range> ranges, List<int> fortunes)
+        static List<long> Fast(List<Range> ranges, List<long> fortunes)
         {
             fortunes = MergeSort(fortunes);
             foreach (Range range in ranges)
@@ -101,7 +109,7 @@
             }
             return fortunes;
         }
-        static int Bot(List<int> fortunes, int value)
+        static int Bot(List<long> fortunes, long value)
         {
             int begin = 0;
             int end = fortunes.Count();
@@ -119,7 +127,7 @@
                 return begin + 1;
             else return begin;
         }
-        static int Top(List<int> fortunes, int value)
+        static int Top(List<long> fortunes, long value)
         {
             int begin = 0;
             int end = fortunes.Count();
@@ -141,10 +149,10 @@
 
     public class Range
     {
-        public int start;
-        public int end;
-        public int count;
-        public Range(int start, int end)
+        public long start;
+        public long end;
+        public long count;
+        public Range(long start, long end)
         {
             this.start = start;
             this.end = end;
